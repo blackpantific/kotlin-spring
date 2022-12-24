@@ -1,6 +1,10 @@
 package com.example.kotlinspring.dao
 
+import com.example.kotlinspring.models.Person
 import com.example.kotlinspring.models.Task
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.BeanPropertyRowMapper
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import java.sql.Connection
 import java.sql.DriverManager
@@ -8,35 +12,36 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 @Component
-class TasksDAO {
-    companion object{
-        private const val URL: String = "jdbc:postgresql://localhost:5432/postgres"
-        private const val USERNAME: String = "postgres"
-        private const val PASSWORD: String = "postgres"
-        private lateinit var connection: Connection
+class TasksDAO constructor(
+    @Autowired
+    private val jdbcTemplate: JdbcTemplate
+) {
+
+    fun index(): List<Person> {//getAllTasks
+
+        return jdbcTemplate.query("SELECT * FROM person", PersonMapper())
     }
 
-    init {
-
-        try{
-            Class.forName("org.postgresql.Driver")
-        }catch (ex: ClassNotFoundException){
-            ex.printStackTrace()
-        }
-
-        try{
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)
-        }
-        catch (ex: SQLException){
-            ex.printStackTrace()
-        }
+    fun save(person: Person) {
+        jdbcTemplate.update(
+            "INSERT INTO person VALUES(1, ?, ?, ?)",
+            person.name,
+            person.age,
+            person.email
+        )
     }
 
-    fun index(): List<Task>{//getAll
+    fun update(id: Int, updatePerson: Person) {
+        jdbcTemplate.update(
+            "UPDATE person SET name=?, age=?, email=? WHERE id=?",
+            updatePerson.name,
+            updatePerson.age,
+            updatePerson.email,
+            id
+        )
+    }
 
-        var statement = connection.createStatement()
-        var SQL = "SELECT * FROM Person"
-        var resultSet: ResultSet = statement.executeQuery(SQL)
-        return emptyList()
+    fun delete(id: Int){
+        jdbcTemplate.update("DELETE FROM person WHERE id=?", id)
     }
 }
