@@ -1,6 +1,5 @@
 package com.example.kotlinspring.models
 
-
 import jakarta.persistence.*
 
 @Entity
