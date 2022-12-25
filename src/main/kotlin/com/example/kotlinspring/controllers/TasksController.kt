@@ -20,7 +20,7 @@ class TasksController @Autowired constructor(private val taskService: TaskServic
     }
 
     @GetMapping("/sayHello")
-    fun sayHello(): String{
+    fun sayHello(): String {
         return "Hello world"
     }
 
@@ -37,10 +37,35 @@ class TasksController @Autowired constructor(private val taskService: TaskServic
                     .append(";")
             }
 
-            throw TaskNotCreatedException(errorMsg.toString() )
+            throw TaskNotCreatedException(errorMsg.toString())
         }
 
         taskService.save(task)
         return ResponseEntity.ok(HttpStatus.OK)
+    }
+
+    @PutMapping("/{id}")
+    fun update(@RequestBody task: Task, bindingResult: BindingResult, @PathVariable("id") id: Int) {
+        //??
+        if (bindingResult.hasErrors()) {
+            val errorMsg = StringBuilder()
+            val list = bindingResult.fieldErrors
+            for (error in list) {
+                errorMsg
+                    .append(error.field)
+                    .append(" - ")
+                    .append(error.defaultMessage)
+                    .append(";")
+            }
+
+            throw TaskNotCreatedException(errorMsg.toString())
+        }
+
+        taskService.update(id, task)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable("id") id: Int) {
+        taskService.delete(id)
     }
 }

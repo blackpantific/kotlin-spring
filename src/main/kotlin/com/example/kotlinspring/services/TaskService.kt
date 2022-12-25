@@ -30,6 +30,17 @@ class TaskService @Autowired constructor(private val taskRepository: TaskReposit
         taskRepository.save(task)
     }
 
+    @Transactional
+    fun update(taskId: Int, task: Task){
+        task.id = taskId
+        taskRepository.save(task)
+    }
+
+    @Transactional
+    fun delete(taskId: Int){
+        taskRepository.deleteById(taskId)
+    }
+
     @ExceptionHandler
     private fun handleException(e: TaskNotFoundException): ResponseEntity<TaskErrorResponse> {
         val response = TaskErrorResponse(
