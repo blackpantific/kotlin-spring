@@ -4,6 +4,7 @@ import com.example.kotlinspring.models.Person
 
 import com.example.kotlinspring.repositories.PeopleRepository
 import com.example.kotlinspring.util.PersonErrorResponse
+import com.example.kotlinspring.util.PersonNotCreatedException
 import com.example.kotlinspring.util.PersonNotFoundException
 
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ class PeopleService @Autowired constructor(private val peopleRepository: PeopleR
         return foundPerson.orElseThrow(::PersonNotFoundException)
     }
 
+    @Transactional
+    fun save(person: Person){
+        peopleRepository.save(person)
+    }
+
     @ExceptionHandler
     private fun handleException(e: PersonNotFoundException): ResponseEntity<PersonErrorResponse>{
         val response = PersonErrorResponse(
@@ -35,5 +41,14 @@ class PeopleService @Autowired constructor(private val peopleRepository: PeopleR
             System.currentTimeMillis()
         )
         return ResponseEntity(response, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler
+    private fun handleException(e: PersonNotCreatedException): ResponseEntity<PersonErrorResponse>{
+        val response = PersonErrorResponse(
+            e.message!!,
+            System.currentTimeMillis()
+        )
+        return ResponseEntity(response, HttpStatus.BAD_REQUEST )
     }
 }
