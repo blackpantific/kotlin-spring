@@ -14,9 +14,10 @@ class HelloController constructor(private var tasksDAO: TasksDAO) {
 
         var res = tasksDAO.index()
 
-        var person: Person = Person(1, "Tom", 18, "tom@gmail.com")
+        var c = 5
+        //var person: Person = Person(1, "Tom", 18, "tom@gmail.com")
 
-        tasksDAO.save(person)
+        //tasksDAO.save(person)
         return "hello"
     }
 }
