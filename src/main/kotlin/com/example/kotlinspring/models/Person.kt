@@ -4,21 +4,29 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "person1")
-class Person() {
-
+class Person {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private var id: Int = 0
+    var id = 0
 
     @Column(name = "name")
-    private lateinit var name: String
+    var name: String? = null
 
     @Column(name = "age")
-    private var age: Int = 0
+    var age = 0
 
-    constructor(name: String, age: Int) : this() {
+    constructor() {}
+    constructor(name: String?, age: Int) {
         this.name = name
         this.age = age
+    }
+
+    override fun toString(): String {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                '}'
     }
 }
