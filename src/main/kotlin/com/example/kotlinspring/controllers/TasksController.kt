@@ -4,8 +4,6 @@ import com.example.kotlinspring.models.Task
 import com.example.kotlinspring.services.TaskService
 import com.example.kotlinspring.util.TaskNotCreatedException
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import java.lang.StringBuilder
@@ -25,47 +23,35 @@ class TasksController @Autowired constructor(private val taskService: TaskServic
     }
 
     @PostMapping
-    fun create(@RequestBody task: Task, bindingResult: BindingResult): ResponseEntity<HttpStatus> {
-        if (bindingResult.hasErrors()) {
-            val errorMsg = StringBuilder()
-            val list = bindingResult.fieldErrors
-            for (error in list) {
-                errorMsg
-                    .append(error.field)
-                    .append(" - ")
-                    .append(error.defaultMessage)
-                    .append(";")
-            }
-
-            throw TaskNotCreatedException(errorMsg.toString())
-        }
-
-        taskService.save(task)
-        return ResponseEntity.ok(HttpStatus.OK)
+    fun create(@RequestBody task: Task, bindingResult: BindingResult): Task {
+        processResult(bindingResult)
+        return taskService.save(task)
     }
 
     @PutMapping("/{id}")
     fun update(@RequestBody task: Task, bindingResult: BindingResult, @PathVariable("id") id: Int) {
-        //??
-        if (bindingResult.hasErrors()) {
-            val errorMsg = StringBuilder()
-            val list = bindingResult.fieldErrors
-            for (error in list) {
-                errorMsg
-                    .append(error.field)
-                    .append(" - ")
-                    .append(error.defaultMessage)
-                    .append(";")
-            }
-
-            throw TaskNotCreatedException(errorMsg.toString())
-        }
-
+        processResult(bindingResult)
         taskService.update(id, task)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Int) {
         taskService.delete(id)
+    }
+
+    private fun processResult(bindingResult: BindingResult){
+        if (bindingResult.hasErrors()) {
+            val errorMsg = StringBuilder()
+            val list = bindingResult.fieldErrors
+            for (error in list) {
+                errorMsg
+                    .append(error.field)
+                    .append(" - ")
+                    .append(error.defaultMessage)
+                    .append(";")
+            }
+
+            throw TaskNotCreatedException(errorMsg.toString())
+        }
     }
 }

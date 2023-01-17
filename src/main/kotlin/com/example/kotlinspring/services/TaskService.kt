@@ -26,8 +26,8 @@ class TaskService @Autowired constructor(private val taskRepository: TaskReposit
     }
 
     @Transactional
-    fun save(task: Task){
-        taskRepository.save(task)
+    fun save(task: Task): Task {
+        return taskRepository.save(task)
     }
 
     @Transactional
